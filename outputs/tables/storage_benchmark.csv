@@ -1,0 +1,4 @@
+approach,seconds_median_3,python_peak_mib,equivalent_result
+CSV baseline,0.19033019989728928,7.834564208984375,True
+Parquet,0.01715420000255108,2.5338563919067383,True
+SQLite + Pandas,0.20214450010098517,28.081100463867188,True
