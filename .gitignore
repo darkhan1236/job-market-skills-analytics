@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+data/raw/*
+!data/raw/manifest.json
+data/processed/*
+outputs/qa/
+deliverables/submission.zip
+.streamlit/secrets.toml
+*.log
