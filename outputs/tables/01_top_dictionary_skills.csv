@@ -1,0 +1,33 @@
+name,jobs,pct_all_jobs
+Communication,60134,48.55
+Leadership,29372,23.72
+Excel,19560,15.79
+Project Management,10261,8.29
+SQL,5520,4.46
+Python,4664,3.77
+Statistics,3951,3.19
+AWS,3249,2.62
+R,2971,2.4
+Azure,2922,2.36
+Salesforce,2904,2.34
+Java,2688,2.17
+JavaScript,2166,1.75
+Git,1776,1.43
+Machine Learning,1719,1.39
+Linux,1706,1.38
+Power BI,1486,1.2
+Google Cloud,1409,1.14
+C++,1299,1.05
+Tableau,1248,1.01
+Kubernetes,1203,0.97
+C#,1181,0.95
+Docker,1058,0.85
+Spark,944,0.76
+NLP,323,0.26
+Hadoop,313,0.25
+Deep Learning,282,0.23
+PyTorch,243,0.2
+TensorFlow,224,0.18
+Pandas,95,0.08
+Scikit-learn,95,0.08
+NumPy,85,0.07
