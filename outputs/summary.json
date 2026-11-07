@@ -1,0 +1,85 @@
+{
+  "jobs": 123849,
+  "salary_n": 36044,
+  "salary_coverage_pct": 29.103182100784018,
+  "salary_median_usd_year": 81510.0,
+  "salary_iqr_lower": -57500.0,
+  "salary_iqr_upper": 234500.0,
+  "salary_iqr_outliers": 952,
+  "salary_display_n": 35092,
+  "date_min": "2023-12-05",
+  "date_max": "2024-04-20",
+  "observed_days": 61,
+  "role_counts": {
+    "Other": 112588,
+    "Analytics": 5259,
+    "Software": 4605,
+    "Data Science / AI": 767,
+    "Data Engineering": 630
+  },
+  "top_skill_mentions": [
+    {
+      "name": "Communication",
+      "jobs": 60134,
+      "pct_all_jobs": 48.55
+    },
+    {
+      "name": "Leadership",
+      "jobs": 29372,
+      "pct_all_jobs": 23.72
+    },
+    {
+      "name": "Excel",
+      "jobs": 19560,
+      "pct_all_jobs": 15.79
+    },
+    {
+      "name": "Project Management",
+      "jobs": 10261,
+      "pct_all_jobs": 8.29
+    },
+    {
+      "name": "SQL",
+      "jobs": 5520,
+      "pct_all_jobs": 4.46
+    },
+    {
+      "name": "Python",
+      "jobs": 4664,
+      "pct_all_jobs": 3.77
+    },
+    {
+      "name": "Statistics",
+      "jobs": 3951,
+      "pct_all_jobs": 3.19
+    },
+    {
+      "name": "AWS",
+      "jobs": 3249,
+      "pct_all_jobs": 2.62
+    },
+    {
+      "name": "R",
+      "jobs": 2971,
+      "pct_all_jobs": 2.4
+    },
+    {
+      "name": "Azure",
+      "jobs": 2922,
+      "pct_all_jobs": 2.36
+    }
+  ],
+  "forecast": {
+    "segment_start": "2024-03-12",
+    "segment_end": "2024-04-19",
+    "segment_days": 39,
+    "train_days": 25,
+    "validation_days": 7,
+    "test_days": 7,
+    "validation_start": "2024-04-06",
+    "test_start": "2024-04-13",
+    "selected_on_validation": "Moving average 7",
+    "protocol": "expanding observations; one-day-ahead; observe actual after each prediction",
+    "memory_note": "tracemalloc peak Python allocations; excludes some native allocations and is not process RSS"
+  }
+}
