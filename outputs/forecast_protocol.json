@@ -1,0 +1,13 @@
+{
+  "segment_start": "2024-03-12",
+  "segment_end": "2024-04-19",
+  "segment_days": 39,
+  "train_days": 25,
+  "validation_days": 7,
+  "test_days": 7,
+  "validation_start": "2024-04-06",
+  "test_start": "2024-04-13",
+  "selected_on_validation": "Moving average 7",
+  "protocol": "expanding observations; one-day-ahead; observe actual after each prediction",
+  "memory_note": "tracemalloc peak Python allocations; excludes some native allocations and is not process RSS"
+}
