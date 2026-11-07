@@ -1,0 +1,20 @@
+{
+  "source": "https://www.kaggle.com/datasets/arshkon/linkedin-job-postings",
+  "version": 13,
+  "license": "CC BY-SA 4.0",
+  "archive_bytes": 166472808,
+  "archive_sha256": "4890ecccfdbd6b7ec0e57af6012cae2e960ba74c10702f5957be365469acc7a4",
+  "files": {
+    "companies\\companies.csv": 23196843,
+    "companies\\company_industries.csv": 782404,
+    "companies\\company_specialities.csv": 4431117,
+    "companies\\employee_counts.csv": 1044625,
+    "jobs\\benefits.csv": 1925812,
+    "jobs\\job_industries.csv": 2506014,
+    "jobs\\job_skills.csv": 3506651,
+    "jobs\\salaries.csv": 2252264,
+    "mappings\\industries.csv": 12734,
+    "mappings\\skills.csv": 679,
+    "postings.csv": 516843769
+  }
+}
