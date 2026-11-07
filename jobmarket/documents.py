@@ -110,12 +110,12 @@ def create_report(summary,audit,metadata,metrics,storage):
     table([['Показатель','Результат'],['Строк в postings.csv',num(audit['raw_rows'])],
            ['Уникальных очищенных вакансий',num(summary['jobs'])],['Отброшено строк с неверным или повторным ID',num(audit['dropped_invalid_or_duplicate_id'])],
            ['Размер postings.csv',f"{num(audit['postings_source_bytes']/1e6,2)} MB"],
-           ['Даты первоначальной публикации',summary['date_min']+' — '+summary['date_max']],
+           ['Даты первоначальной публикации',summary['date_min']+' - '+summary['date_max']],
            ['Дат с наблюдениями',summary['observed_days']],['Связей вакансия и навык',num(audit['job_skill_links'])]], [275,205])
     missing=sorted(audit['raw_missing_pct'].items(),key=lambda x:x[1],reverse=True)
     table([['Поле источника','Пропуски %']]+[[k,num(v,2)] for k,v in missing[:7]],[330,150])
     p('Пропуски зарплаты не заменяются средним. Неизвестный remote_allowed не считается офисной работой. Строки без company_id сохраняются, связь с компанией допускает NULL. Если компания отсутствует в справочнике, внешний ключ становится NULL. Повторные job_id удаляются по правилу первого появления в закреплённом архиве.')
-    p('Типы признаков: ID и числовые счётчики; категориальные регион, опыт и тип занятости; временная дата; исходный текст описания. Все типы и доли пропусков сохраняются в audit.json, описательная статистика — в descriptive_statistics.csv.')
+    p('Типы признаков: ID и числовые счётчики; категориальные регион, опыт и тип занятости; временная дата; исходный текст описания. Все типы и доли пропусков сохраняются в audit.json, описательная статистика - в descriptive_statistics.csv.')
     page(); title('Архитектура и база данных')
     p('main.py управляет этапами download, build, analyze и documents. Пакет jobmarket содержит независимые модули для загрузки, очистки, извлечения навыков, SQL, прогноза и документов. app.py читает SQLite и показывает результаты с фильтрами.')
     chart('er_diagram.png',480,220)
@@ -137,8 +137,8 @@ def create_report(summary,audit,metadata,metrics,storage):
     page();title('Временные ряды и сезонная декомпозиция')
     chart('06_time_series.png',480,215)
     chart('07_decomposition.png',480,305)
-    p(f"Для временных методов выбран самый длинный сегмент последовательных дат с наблюдениями. Первая и последняя даты сегмента исключены как потенциально неполные. Получен интервал {protocol['segment_start']} — {protocol['segment_end']}, {protocol['segment_days']} дней. Правило выбора фиксировано до сравнения методов.")
-    p('Пропущенные даты не заполняются нулём. resample формирует недельные и месячные сводки, rolling(7) — скользящее среднее. STL с периодом 7 описывает недельную структуру внутри сегмента. Она не доказывает годовую сезонность и не используется при прогнозировании. Разрывы сбора видны в интерактивной HTML-визуализации.','small')
+    p(f"Для временных методов выбран самый длинный сегмент последовательных дат с наблюдениями. Первая и последняя даты сегмента исключены как потенциально неполные. Получен интервал {protocol['segment_start']} - {protocol['segment_end']}, {protocol['segment_days']} дней. Правило выбора фиксировано до сравнения методов.")
+    p('Пропущенные даты не заполняются нулём. resample формирует недельные и месячные сводки, rolling(7) - скользящее среднее. STL с периодом 7 описывает недельную структуру внутри сегмента. Она не доказывает годовую сезонность и не используется при прогнозировании. Разрывы сбора видны в интерактивной HTML-визуализации.','small')
     page();title('Сравнение методов прогноза')
     p(f"Начальная история: {protocol['train_days']} дней. Validation: 7 дней с {protocol['validation_start']}. Test: 7 дней с {protocol['test_start']}. На каждом шаге прогнозируется следующий день, затем в историю добавляется фактическое наблюдение. Это последовательный однодневный прогноз, а не прогноз сразу на неделю.")
     p('Baseline Naive повторяет последнее наблюдение. Moving average 7 усредняет последние 7 дней. Linear regression оценивает линейный тренд по последним 14 наблюдениям. Окна фиксированы заранее. Метод для итогового вывода выбирается по MAE validation; тест не участвует в выборе.')
@@ -149,7 +149,7 @@ def create_report(summary,audit,metadata,metrics,storage):
     p(f"Выбор по validation: {escape(protocol['selected_on_validation'])}. Его тестовая MAE {num(selected['test_mae'],2)} означает среднюю абсолютную ошибку количества наблюдаемых вакансий за день. При таком коротком тесте нельзя заключать, что этот метод устойчиво лучше в другие периоды.")
     if selected['test_mae'] > baseline['test_mae']:
         p(f"На тесте Naive точнее выбранного по validation метода: MAE {num(baseline['test_mae'],2)} против {num(selected['test_mae'],2)}. Значит, выигрыш на validation не перенёсся на следующую неделю. Простого baseline достаточно для этого теста; надёжность прогноза на неоднородных снимках не подтверждена.")
-    p('Время — медиана пяти запусков полного тестового прохода. Память — пиковые выделения Python по tracemalloc; часть нативной памяти не учитывается, это не RSS процесса. Графики и сохранение файлов не включены в измерение.','small')
+    p('Время - медиана пяти запусков полного тестового прохода. Память - пиковые выделения Python по tracemalloc; часть нативной памяти не учитывается, это не RSS процесса. Графики и сохранение файлов не включены в измерение.','small')
     page();title('SQL и корреляционный анализ')
     chart('05_correlation.png',480,250)
     p('Используется ранговая корреляция Спирмена: зарплаты и счётчики имеют асимметричные распределения. Расчёт попарный по доступным значениям. Число наблюдений каждой пары сохранено в correlation_pair_counts.csv. Корреляция сама по себе не устанавливает причинность.')
@@ -160,13 +160,13 @@ def create_report(summary,audit,metadata,metrics,storage):
            ['09 JOIN и HAVING','Зарплата при упоминании навыка, n ≥ 50'],['10 GROUP BY','Покрытие зарплат по опыту']],[175,305])
     p('Все 10 запросов загружаются в Pandas через read_sql_query и сохраняются в outputs/tables. Запросы 01, 03, 05 и 10 участвуют в основных результатах. LAG сравнивает наблюдаемые месяцы; месяцы с неполным покрытием нельзя считать полноценными рыночными периодами.','small')
     page();title('Хранение и воспроизводимость')
-    p('Дополнительное сравнение использует одинаковые столбцы job_id, region и annual_salary из одной очищенной таблицы. CSV является baseline, Parquet и SQLite — альтернативами. Для всех применяется одинаковая агрегация Pandas по региону. Равенство результатов проверяется с числовым допуском 1e-8.')
+    p('Дополнительное сравнение использует одинаковые столбцы job_id, region и annual_salary из одной очищенной таблицы. CSV является baseline, Parquet и SQLite - альтернативами. Для всех применяется одинаковая агрегация Pandas по региону. Равенство результатов проверяется с числовым допуском 1e-8.')
     table([['Подход','Время с','Python MiB','Результат одинаков']]+[[r['approach'],num(r['seconds_median_3'],4),num(r['python_peak_mib'],2),'Да'] for r in storage.to_dict('records')],[170,100,100,110])
     chunks=audit['memory_chunks']
     before=sum(x['before_bytes'] for x in chunks); after=sum(x['after_bytes'] for x in chunks)
     p(f"Сумма памяти компактных блоков до оптимизации типов: {num(before/1024**2,2)} MiB, после: {num(after/1024**2,2)} MiB. Снижение: {num((1-after/before)*100,1)}%. Это сумма memory_usage(deep=True) по блокам, а не пиковый RSS. Текст исходных описаний в это сравнение не входит.")
     table([['Файл очищенной таблицы','Размер MB'],['CSV',num(audit['analytical_csv_bytes']/1e6,2)],['Parquet zstd',num(audit['parquet_bytes']/1e6,2)]],[330,150])
-    p('Время чтения — медиана трёх запусков после прогрева; файловый кэш ОС не очищался. Python-память измеряется отдельным проходом tracemalloc. Parquet полезен для компактного обмена аналитической таблицей, SQLite — для связей и запросов дашборда. Эти измерения характеризуют выбранную операцию, а не универсальное превосходство формата.')
+    p('Время чтения - медиана трёх запусков после прогрева; файловый кэш ОС не очищался. Python-память измеряется отдельным проходом tracemalloc. Parquet полезен для компактного обмена аналитической таблицей, SQLite - для связей и запросов дашборда. Эти измерения характеризуют выбранную операцию, а не универсальное превосходство формата.')
     p('В README приведены команды установки, загрузки версии 13, сборки и запуска. requirements.txt закрепляет проверенные версии библиотек. Тесты проверяют расчёт зарплаты, границы поиска, отсутствие утечки будущих наблюдений, разрывы календаря, внешние ключи и исполнение всех SQL-запросов.')
     page();title('Выводы и ограничения')
     p(f"Получен воспроизводимый инструмент анализа {num(summary['jobs'])} вакансий с нормализованной базой и интерактивными фильтрами. Упоминания навыков показывают профиль требований в выбранной выборке. Зарплатные оценки относятся к {num(summary['salary_n'])} объявлениям с сопоставимой оплатой и не описывают доход всех работников.")
@@ -191,7 +191,7 @@ def create_report(summary,audit,metadata,metrics,storage):
         canvas.setFont('Body',8);canvas.setFillColor(GRAY)
         canvas.drawString(52,30,'Job Market Skills Analytics · исходные данные Kaggle v13')
         canvas.drawRightString(A4[0]-52,30,str(doc.page))
-    doc=SimpleDocTemplate(str(ROOT/'deliverables/report_ru.pdf'),pagesize=A4,rightMargin=52,leftMargin=52,topMargin=42,bottomMargin=48,title='Job Market Skills Analytics — отчёт',author=contributors(metadata))
+    doc=SimpleDocTemplate(str(ROOT/'deliverables/report_ru.pdf'),pagesize=A4,rightMargin=52,leftMargin=52,topMargin=42,bottomMargin=48,title='Job Market Skills Analytics - отчёт',author=contributors(metadata))
     doc.build(story,onFirstPage=footer,onLaterPages=footer)
 
 def create_slides(summary,audit,metadata,metrics,storage):
@@ -199,7 +199,7 @@ def create_slides(summary,audit,metadata,metrics,storage):
     width,height=960,540
     output=ROOT/'deliverables/presentation_ru.pdf'
     c=canvas.Canvas(str(output),pagesize=(width,height))
-    c.setTitle('Job Market Skills Analytics — презентация')
+    c.setTitle('Job Market Skills Analytics - презентация')
     c.setAuthor(contributors(metadata))
     body=ParagraphStyle('slide',fontName='Body',fontSize=19,leading=27,textColor=INK)
     small=ParagraphStyle('source',fontName='Body',fontSize=10,leading=14,textColor=GRAY)
@@ -228,11 +228,11 @@ def create_slides(summary,audit,metadata,metrics,storage):
     note(escape(metadata['course'])+' · Applied Artificial Intelligence');end()
     start('Данные и вопросы исследования')
     text('Какие навыки встречаются чаще?<br/>Как зарплаты различаются по регионам и ролям?<br/>Можно ли предсказать число объявлений на следующий день?',52,420)
-    text(f"Kaggle, Arsh Koneru, версия 13<br/>Период наблюдений: {summary['date_min']} — {summary['date_max']}<br/>Сопоставимая зарплата: {num(summary['salary_coverage_pct'],1)}% вакансий",52,270)
+    text(f"Kaggle, Arsh Koneru, версия 13<br/>Период наблюдений: {summary['date_min']} - {summary['date_max']}<br/>Сопоставимая зарплата: {num(summary['salary_coverage_pct'],1)}% вакансий",52,270)
     note(SOURCE+' · CC BY-SA 4.0. Исторические снимки не описывают весь рынок.');end()
     start('Архитектура и связи данных')
     chart('er_diagram.png',48,170,860,245)
-    text('CSV читается блоками по 10 000 строк.<br/>SQLite хранит связи, Parquet — компактные признаки.<br/>Streamlit получает данные через SQL с параметрами.',52,155,850,ParagraphStyle('arch',parent=body,fontSize=17,leading=23))
+    text('CSV читается блоками по 10 000 строк.<br/>SQLite хранит связи, Parquet - компактные признаки.<br/>Streamlit получает данные через SQL с параметрами.',52,155,850,ParagraphStyle('arch',parent=body,fontSize=17,leading=23))
     note('Исходный код: jobmarket/pipeline.py, sql/schema.sql. ER-диаграмма также сохранена в SVG.');end()
     start('Наиболее частые упоминания навыков')
     chart('01_skills.png',40,95,650,335)
@@ -248,7 +248,7 @@ def create_slides(summary,audit,metadata,metrics,storage):
     note('USD BASE_SALARY. Почасовая ставка × 2080. Исходные выбросы сохранены.');end()
     start('Региональные различия зарплат')
     chart('03_salary_regions.png',70,105,820,320)
-    note('10 наиболее частых регионов IQR-подвыборки. Регион — суффикс location. Выборка зарплат неполная.');end()
+    note('10 наиболее частых регионов IQR-подвыборки. Регион - суффикс location. Выборка зарплат неполная.');end()
     start('Наблюдаемые публикации во времени')
     chart('06_time_series.png',60,105,830,320)
     note('Самый длинный непрерывный сегмент, граничные дни исключены. Пропуски сбора не считаются нулём.');end()
@@ -266,7 +266,7 @@ def create_slides(summary,audit,metadata,metrics,storage):
         vals=[row['model'],num(row['validation_mae'],2),num(row['test_mae'],2),num(row['test_runtime_ms_median_5'],3),num(row['python_peak_kib'],2)]
         for x,v in zip(x_positions,vals):c.drawString(x,365-i*45,v)
     text('На каждом шаге прогноз на один день.<br/>Выбор по validation: <b>'+escape(summary['forecast']['selected_on_validation'])+'</b>.<br/>На последующем тесте Naive оказался точнее.',52,205)
-    note('MAE — вакансии в день. Время: медиана 5 запусков. KiB: tracemalloc, не RSS. Короткий тест ограничивает выводы.');end()
+    note('MAE - вакансии в день. Время: медиана 5 запусков. KiB: tracemalloc, не RSS. Короткий тест ограничивает выводы.');end()
     start('CSV Parquet и SQLite')
     c.setFont('BodyBold',18);c.setFillColor(TEAL)
     c.drawString(52,410,'Подход');c.drawString(480,410,'Секунды');c.drawString(700,410,'Python MiB')
