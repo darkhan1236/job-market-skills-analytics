@@ -1,0 +1,16 @@
+{
+  "title": "Job Market Skills Analytics",
+  "course": "Programming for Data Analysis and Database",
+  "programme": "Applied Artificial Intelligence",
+  "group": "",
+  "participants": [
+    {
+      "name": "Сулейманов Тагир",
+      "contribution": "Загрузка CSV блоками, проверка качества и очистка данных, пересчёт зарплат, извлечение навыков, схема SQLite, ER-диаграмма и SQL-запросы."
+    },
+    {
+      "name": "Дархан Зейнулла",
+      "contribution": "EDA и визуализации, временные ряды и STL, сравнение прогнозов по MAE, времени и памяти, дашборд Streamlit, оформление отчёта и презентации."
+    }
+  ]
+}
