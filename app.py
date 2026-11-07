@@ -88,7 +88,7 @@ with tabs[2]:
         protocol=json.loads((OUTPUT/'forecast_protocol.json').read_text())
         st.write(f"Выбор по validation: {protocol['selected_on_validation']}. Test начинается {protocol['test_start']}.")
 with tabs[3]:
-    st.write('Категории должностей определяются правилами. Регион — двухбуквенный суффикс location, без геокодирования. Отсутствие флага remote означает неизвестность.')
+    st.write('Категории должностей определяются правилами. Регион - двухбуквенный суффикс location, без геокодирования. Отсутствие флага remote означает неизвестность.')
     st.write('Сезонная декомпозиция STL использует период 7 дней. Она описывает наблюдаемый сегмент и не участвует в признаках прогноза.')
     st.dataframe(data.head(100))
     st.download_button('Скачать отфильтрованные данные CSV',data.to_csv(index=False).encode('utf-8-sig'),file_name='filtered_jobs.csv',mime='text/csv')
