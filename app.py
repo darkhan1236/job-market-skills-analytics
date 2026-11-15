@@ -10,7 +10,9 @@ st.set_page_config(page_title='Job Market Skills Analytics',page_icon='📊',lay
 st.title('Job Market Skills Analytics')
 st.caption('LinkedIn snapshots 2023–2024 · исторические данные · USD base salary')
 if not DB.exists():
-    st.info('Сначала выполните: python main.py all')
+    st.info('База data/processed/jobs.db отсутствует. Подготовка данных из корня проекта:')
+    st.code(r'.venv\Scripts\python.exe main.py all', language='powershell')
+    st.caption('После успешного завершения обработки дашборд можно запустить повторно. При ошибке Kaggle предусмотрена ручная загрузка архива; порядок описан в README.')
     st.stop()
 
 @st.cache_data
