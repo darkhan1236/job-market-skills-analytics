@@ -5,6 +5,7 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 from jobmarket.config import DB, OUTPUT
+from jobmarket.forecast import forecast_day, forecast_history, longest_observed_segment
 
 st.set_page_config(page_title='Job Market Skills Analytics',page_icon='📊',layout='wide')
 st.title('Job Market Skills Analytics')
@@ -83,12 +84,59 @@ with tabs[2]:
     timeline.update_traces(connectgaps=False)
     st.plotly_chart(timeline,width='stretch')
     st.warning('Пропущенные дни означают неизвестное покрытие сбора. Изменения числа объявлений нельзя напрямую трактовать как изменение всего рынка.')
+    st.subheader('Обучение модели и прогноз на один день')
+    st.caption('Расчёт по полному набору данных, независимо от боковых фильтров. Используется непрерывный исторический сегмент с исключёнными крайними днями. Фактическое значение выбранного дня не участвует в обучении.')
+    full_daily = read('SELECT posted_date, COUNT(*) AS jobs FROM jobs WHERE posted_date IS NOT NULL GROUP BY posted_date ORDER BY posted_date')
+    try:
+        forecast_series = longest_observed_segment(full_daily)
+        if len(forecast_series) < 15:
+            raise ValueError('Недостаточно последовательных дат: нужны 14 дней истории и один день для проверки.')
+    except ValueError as error:
+        st.info(str(error))
+    else:
+        available_dates = [value.date() for value in forecast_series.index[14:]]
+        target_date = st.selectbox('Дата прогноза', available_dates,
+            index=max(0, len(available_dates)-7), format_func=lambda d: d.isoformat(), key='forecast_date')
+        method = st.selectbox('Метод прогноза', ['Linear regression','Naive','Moving average 7'], key='forecast_method')
+        history = forecast_history(forecast_series, target_date)
+        training = pd.DataFrame({'Дата': history.index.strftime('%Y-%m-%d'),
+            'Номер дня (x)': range(14), 'Количество вакансий (y)': history.to_numpy(dtype=int)})
+        st.write('Входные данные: 14 дней перед выбранной датой')
+        st.dataframe(training, hide_index=True, width='stretch')
+        st.caption('Linear regression обучается заново: x - номер дня от 0 до 13, y - количество вакансий. Затем рассчитывается значение для дня 14. Naive использует последний день, Moving average 7 - последние 7 дней из показанной истории.')
+        result_key = (target_date.isoformat(), method, stamp)
+        if st.button('Обучить и предсказать' if method == 'Linear regression' else 'Рассчитать прогноз', key='run_forecast'):
+            st.session_state['forecast_result'] = (result_key, forecast_day(forecast_series, target_date, method))
+        stored = st.session_state.get('forecast_result')
+        if stored and stored[0] == result_key:
+            result = stored[1]
+            if method == 'Linear regression':
+                st.success('Линейная регрессия обучена на показанных 14 днях. Прогноз рассчитан для следующего дня.')
+            metrics = st.columns(3)
+            metrics[0].metric('Прогноз вакансий', f"{result['forecast']:,.2f}")
+            metrics[1].metric('Фактически в выбранный день', f"{result['actual']:,.0f}")
+            metrics[2].metric('Абсолютная ошибка за день', f"{result['absolute_error']:,.2f}")
+            comparison = px.line(training, x='Дата', y='Количество вакансий (y)', markers=True,
+                title='Предыдущие 14 дней и проверка прогноза')
+            comparison.add_scatter(x=[result['date']], y=[result['forecast']], mode='markers',
+                name='Прогноз', marker={'size':13,'symbol':'diamond'})
+            comparison.add_scatter(x=[result['date']], y=[result['actual']], mode='markers',
+                name='Факт', marker={'size':13,'symbol':'x'})
+            comparison.update_layout(xaxis_title='Дата', yaxis_title='Количество вакансий')
+            st.plotly_chart(comparison, width='stretch')
+            st.caption('Ошибка одного дня равна |прогноз - факт|. MAE в таблице ниже усредняет такие ошибки за 7 тестовых дней. Это проверка исторической даты, не прогноз текущего рынка.')
     if (OUTPUT/'tables/forecast_metrics.csv').exists():
         st.subheader('Проверка прогноза для полного набора данных')
         st.caption('Эти результаты относятся ко всему набору и не пересчитываются боковыми фильтрами. Прогноз на 1 день с обновлением истории после наблюдения факта.')
         st.dataframe(pd.read_csv(OUTPUT/'tables/forecast_metrics.csv'))
         protocol=json.loads((OUTPUT/'forecast_protocol.json').read_text())
         st.write(f"Выбор по validation: {protocol['selected_on_validation']}. Test начинается {protocol['test_start']}.")
+        predictions_path = OUTPUT/'tables/forecast_predictions.csv'
+        if predictions_path.exists():
+            predictions = pd.read_csv(predictions_path)
+            lines = predictions.melt(id_vars='date', var_name='Ряд', value_name='Количество вакансий')
+            st.plotly_chart(px.line(lines, x='date', y='Количество вакансий', color='Ряд', markers=True,
+                title='Факт и прогнозы на 7 тестовых днях'), width='stretch')
 with tabs[3]:
     st.write('Категории должностей определяются правилами. Регион - двухбуквенный суффикс location, без геокодирования. Отсутствие флага remote означает неизвестность.')
     st.write('Сезонная декомпозиция STL использует период 7 дней. Она описывает наблюдаемый сегмент и не участвует в признаках прогноза.')
