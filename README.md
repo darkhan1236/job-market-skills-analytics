@@ -110,8 +110,8 @@ data/raw/manifest.json     происхождение, версия, лицен�
 data/processed/jobs.db     готовая нормализованная база
 data/processed/jobs.parquet компактная очищенная таблица
 outputs/                   аудит, сводка, метрики, таблицы и графики
-deliverables/report_ru.pdf  письменный отчёт
-deliverables/presentation_ru.pdf презентация
+deliverables/report.pdf     письменный отчёт
+deliverables/presentation.pdf презентация
 project_metadata.json      ФИО, группа и фактический вклад участников
 ```
 
