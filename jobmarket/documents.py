@@ -191,13 +191,13 @@ def create_report(summary,audit,metadata,metrics,storage):
         canvas.setFont('Body',8);canvas.setFillColor(GRAY)
         canvas.drawString(52,30,'Job Market Skills Analytics · исходные данные Kaggle v13')
         canvas.drawRightString(A4[0]-52,30,str(doc.page))
-    doc=SimpleDocTemplate(str(ROOT/'deliverables/report_ru.pdf'),pagesize=A4,rightMargin=52,leftMargin=52,topMargin=42,bottomMargin=48,title='Job Market Skills Analytics - отчёт',author=contributors(metadata))
+    doc=SimpleDocTemplate(str(ROOT/'deliverables/report.pdf'),pagesize=A4,rightMargin=52,leftMargin=52,topMargin=42,bottomMargin=48,title='Job Market Skills Analytics - отчёт',author=contributors(metadata))
     doc.build(story,onFirstPage=footer,onLaterPages=footer)
 
 def create_slides(summary,audit,metadata,metrics,storage):
     """Landscape PDF presentation built from the analysis results."""
     width,height=960,540
-    output=ROOT/'deliverables/presentation_ru.pdf'
+    output=ROOT/'deliverables/presentation.pdf'
     c=canvas.Canvas(str(output),pagesize=(width,height))
     c.setTitle('Job Market Skills Analytics - презентация')
     c.setAuthor(contributors(metadata))
@@ -297,4 +297,4 @@ def create_documents():
     make_er_diagram()
     create_report(summary,audit,metadata,metrics,storage)
     create_slides(summary,audit,metadata,metrics,storage)
-    print('Created deliverables/report_ru.pdf and presentation_ru.pdf')
+    print('Created deliverables/report.pdf and presentation.pdf')
